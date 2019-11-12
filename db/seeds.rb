@@ -16,26 +16,235 @@ eli = User.create(name: "Eli")
 barak = User.create(name: "Barak")
 barak_obama = User.create(name: "President Barak Obama")
 
-triona.songs << song2
-triona.songs << eleanor_rigby
-jonah.songs << eleanor_rigby
-jonah.songs << hey_ya
-eli.songs << love_will_tear_us_apart
-eli.songs << love_will_tear_us_apart 
-eli.songs << yesterday
-eli.songs << yesterday
-eli.songs << happy_birthday
-eli.songs << happy_birthday
-eli.songs << someday
-eli.songs << someday
-eli.songs << hey_ya
-eli.songs << hey_ya 
-eli.songs << eleanor_rigby
-eli.songs << jesus_walks 
-eli.songs << fun
-eli.songs << song2 
-eli.songs << ruby_tuesday 
+75.times do
+    eli.songs << love_will_tear_us_apart
+end 
+3.times do
+    eli.songs << yesterday
+end 
+56.times do
+    eli.songs << love_will_tear_us_apart
+end 
+83.times do
+    eli.songs << happy_birthday
+end 
+25.times do
+    eli.songs << someday
+end 
+26.times do
+    eli.songs << hey_ya
+end 
+49.times do
+    eli.songs << eleanor_rigby
+end 
+8.times do
+    eli.songs << jesus_walks 
+end 
+13.times do
+    eli.songs << fun
+end 
+17.times do
+    eli.songs << song2 
+end 
+
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
+barak.songs << ruby_tuesday
 barak.songs << ruby_tuesday
 barak.songs << hey_ya
+barak.songs << hey_ya
+barak.songs << hey_ya
+barak.songs << hey_ya
+barak.songs << hey_ya
+barak.songs << hey_ya
+barak.songs << hey_ya
+barak.songs << hey_ya
+barak.songs << hey_ya
+barak.songs << hey_ya
+barak.songs << hey_ya
+barak.songs << hey_ya
+barak.songs << hey_ya
+barak.songs << happy_birthday
+barak.songs << happy_birthday
+barak.songs << happy_birthday
+barak.songs << happy_birthday
+barak.songs << happy_birthday
+barak.songs << happy_birthday
+barak.songs << happy_birthday
+barak.songs << happy_birthday
+barak.songs << happy_birthday
+barak.songs << happy_birthday
+barak.songs << happy_birthday
+barak.songs << happy_birthday
+barak.songs << happy_birthday
+barak.songs << yesterday 
+barak.songs << yesterday 
+barak.songs << yesterday 
+barak.songs << yesterday 
+barak.songs << yesterday 
+barak.songs << yesterday 
+barak.songs << yesterday 
+barak.songs << yesterday 
+barak.songs << yesterday 
+barak.songs << yesterday 
+barak.songs << love_will_tear_us_apart 
+barak.songs << love_will_tear_us_apart 
+barak.songs << love_will_tear_us_apart 
+barak.songs << love_will_tear_us_apart 
+barak.songs << love_will_tear_us_apart 
+barak.songs << love_will_tear_us_apart 
+barak.songs << love_will_tear_us_apart 
+barak.songs << someday  
+barak.songs << someday 
+barak.songs << someday 
+barak.songs << someday 
+barak.songs << someday 
+barak.songs << someday 
+barak.songs << someday 
+barak.songs << someday 
+barak.songs << someday 
+barak.songs << someday 
+barak.songs << someday 
+barak.songs << someday 
+barak.songs << someday 
+barak.songs << someday 
+barak.songs << someday 
+barak_obama.songs << jesus_walks
+barak_obama.songs << jesus_walks
+barak_obama.songs << jesus_walks
+barak_obama.songs << jesus_walks
+barak_obama.songs << jesus_walks
+barak_obama.songs << jesus_walks
+barak_obama.songs << jesus_walks
+barak_obama.songs << jesus_walks
+barak_obama.songs << jesus_walks
+barak_obama.songs << jesus_walks
+barak_obama.songs << jesus_walks
+barak_obama.songs << jesus_walks
+barak_obama.songs << jesus_walks
+barak_obama.songs << jesus_walks
+barak_obama.songs << jesus_walks
 barak_obama.songs << jesus_walks
 barak_obama.songs << happy_birthday
+barak_obama.songs << happy_birthday
+barak_obama.songs << happy_birthday
+barak_obama.songs << happy_birthday
+barak_obama.songs << happy_birthday
+barak_obama.songs << happy_birthday
+barak_obama.songs << happy_birthday
+barak_obama.songs << happy_birthday
+barak_obama.songs << happy_birthday
+barak_obama.songs << happy_birthday
+barak_obama.songs << happy_birthday
+barak_obama.songs << happy_birthday
+barak_obama.songs << happy_birthday
+barak_obama.songs << happy_birthday
+barak_obama.songs << happy_birthday
+barak_obama.songs << fun 
+barak_obama.songs << fun 
+barak_obama.songs << fun 
+barak_obama.songs << fun 
+barak_obama.songs << fun 
+barak_obama.songs << fun 
+barak_obama.songs << fun 
+barak_obama.songs << fun 
+barak_obama.songs << fun 
+barak_obama.songs << fun 
+barak_obama.songs << fun 
+triona.songs << song2
+triona.songs << song2
+triona.songs << song2
+triona.songs << song2
+triona.songs << song2
+triona.songs << song2
+triona.songs << song2
+triona.songs << song2
+triona.songs << song2
+triona.songs << song2
+triona.songs << song2
+triona.songs << song2
+triona.songs << song2
+triona.songs << song2
+triona.songs << song2
+triona.songs << eleanor_rigby
+triona.songs << eleanor_rigby
+triona.songs << eleanor_rigby
+triona.songs << eleanor_rigby
+triona.songs << eleanor_rigby
+triona.songs << fun 
+triona.songs << fun 
+triona.songs << fun 
+triona.songs << fun 
+triona.songs << fun 
+triona.songs << fun 
+triona.songs << fun 
+jonah.songs << eleanor_rigby
+jonah.songs << eleanor_rigby
+jonah.songs << eleanor_rigby
+jonah.songs << eleanor_rigby
+jonah.songs << eleanor_rigby
+jonah.songs << eleanor_rigby
+jonah.songs << eleanor_rigby
+jonah.songs << eleanor_rigby
+jonah.songs << eleanor_rigby
+jonah.songs << hey_ya
+jonah.songs << hey_ya
+jonah.songs << hey_ya
+jonah.songs << hey_ya
+jonah.songs << hey_ya
+jonah.songs << hey_ya
+jonah.songs << hey_ya
+jonah.songs << hey_ya
+jonah.songs << hey_ya
+jonah.songs << hey_ya
+jonah.songs << hey_ya
+jonah.songs << hey_ya
+jonah.songs << hey_ya
+jonah.songs << hey_ya
+jonah.songs << hey_ya
+jonah.songs << hey_ya
+jonah.songs << yesterday
+jonah.songs << yesterday
+jonah.songs << yesterday
+jonah.songs << yesterday
+jonah.songs << yesterday
+jonah.songs << yesterday
+jonah.songs << someday
+jonah.songs << someday
+jonah.songs << someday
+jonah.songs << ruby_tuesday
+jonah.songs << ruby_tuesday
+jonah.songs << ruby_tuesday
+
