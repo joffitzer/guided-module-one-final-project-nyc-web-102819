@@ -34,11 +34,15 @@ class PlaylistApp
         choice = prompt.select("What would you like to do?") do |menu|
             menu.choice "Make a new playlist" 
             menu.choice "View playlists" 
+            menu.choice "Log Out"
         end 
         if choice == "Make a new playlist"
             make_a_new_playlist_flow(found_user)
-        else choice == "View playlists"
+        elsif choice == "View playlists"
             view_playlist_flow(found_user)
+        else choice == "Log Out"
+            puts "Goodbye!"
+            exit 
         end  
     end
 
@@ -54,24 +58,13 @@ class PlaylistApp
         songs_for_playlist_array = add_songs_to_an_array(response_hash, limit)
         display_top_spotify_songs(response_hash, limit)
         create_playlist_response = create_playlist_prompt(found_user, songs_for_playlist_array)
-        #create_playlist(found_user, songs_for_playlist_array)
-        #show_playlist_response = show_playlist_prompt 
-        # users_playlists = find_a_users_playlists
-        # show_playlists(found_user)
-        # chosen_playlist_response = chosen_playlist_prompt 
-        # view_songs_in_playlist(chosen_playlist_response)
-        # prompt_to_return_or_exit(found_user)
     end 
 
     def create_playlist_flow(found_user, songs_for_playlist_array)
         create_playlist(found_user, songs_for_playlist_array)
-        show_playlist_response = show_playlist_prompt 
+        show_playlist_response = show_playlist_prompt(found_user)
         users_playlists = find_a_users_playlists
         view_playlist_flow(found_user)
-        # show_playlists(found_user)
-        # chosen_playlist_response = chosen_playlist_prompt 
-        # view_songs_in_playlist(chosen_playlist_response)
-        # prompt_to_return_or_exit(found_user)
     end
 
     def view_playlist_flow(found_user)
@@ -170,9 +163,17 @@ class PlaylistApp
         new_pl.songs = songs_for_playlist_array
     end
 
-    def show_playlist_prompt
-        puts "Would you like to see your playlists? (Yes/No)"
-        gets.chomp
+    def show_playlist_prompt(found_user)
+        prompt = TTY::Prompt.new 
+        choice = prompt.select("Would you like to see your playlists?") do |menu|
+            menu.choice "Yes" 
+            menu.choice "No" 
+        end 
+        if choice == "Yes"
+            view_playlist_flow(found_user)
+        else choice == "No" 
+            interface(found_user)
+        end
     end 
 
     def find_a_users_playlists
