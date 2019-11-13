@@ -7,12 +7,6 @@ class PlaylistApp
 
     def run
         greeting
-        type = playlist_type_prompt
-        time_range = playlist_time_range_prompt
-        limit = playlist_limit_prompt
-        response = call_api(type, time_range, limit)
-        response_hash = parse_response(response)
-        display_top_spotify_songs(response_hash, limit)
         run_after_greeting
     end
 
@@ -21,12 +15,8 @@ class PlaylistApp
         puts "Welcome to the Playlist App."
     end
 
-    def playlist_type_prompt
-        puts "Would you like to make a playlist of your favorite tracks or artists?"
-        gets.chomp
-    end
-
     def playlist_time_range_prompt
+        puts "Please answer the following questions to make your playlist!"
         puts "Would you like the time range to be long_term, medium_term, short_term?"
         gets.chomp
     end
@@ -36,12 +26,12 @@ class PlaylistApp
         gets.chomp
     end
 
-    def call_api(type, time_range, limit)
-        uri = URI.parse("https://api.spotify.com/v1/me/top/#{type}?time_range=#{time_range}&limit=#{limit}")
+    def call_api(time_range, limit)
+        uri = URI.parse("https://api.spotify.com/v1/me/top/tracks?time_range=#{time_range}&limit=#{limit}")
         request = Net::HTTP::Get.new(uri)
         request.content_type = "application/json"
         request["Accept"] = "application/json"
-        request["Authorization"] = "Bearer BQAqsq3IElF7dCJsEXdB9wAkGQWAZgGKM-9V3L0JC7w1Hhb2l565bb1ED2qdFqRGRPC5lj3HKej7V8sCySE65uMUkGj8Z2E9NTpPKyLsLdc32t6QS5qpHEdUf5n_V7dZaLY7UGzhL7RccLXmcPvsU94"
+        request["Authorization"] = "Bearer BQBe8VZUCRZZ5BcUjvA2fgWooVzfFP55ap8b_wFqxuo1dcGr-T6o2tV3RpmbyzbWEEJ4GrKhWbfQKdf4hB6Fc_PfsR_ESNSRu6W7wrdeHuD-HFw5Y2fprHUQlXuIaOFGI_1Ho9oqY59Jwrr8yzGv9aQ"
 
         req_options = {
         use_ssl: uri.scheme == "https",
@@ -60,11 +50,53 @@ class PlaylistApp
 
     def display_top_spotify_songs(response_hash, limit)
             limit.to_i.times do |count|
-            puts "#{response_hash["items"][count]["album"]["artists"][0]["name"]} - #{response_hash["items"][count]["name"]}"
+            puts "#{count + 1}. #{response_hash["items"][count]["album"]["artists"][0]["name"]} - #{response_hash["items"][count]["name"]}"
             end
     end
-    
-    
+
+    # if !Contact.exists?(:survey_id => survey, :voter_id => voter)
+    #     c = Contact.new
+    #     c.survey_id = survey
+    #     c.voter_id = voter
+    #     c.save
+    #  end
+
+    def add_to_songs_table(response_hash, limit)
+        limit.to_i.times do |count|
+            if !Song.all.exists?(title: "#{response_hash["items"][count]["name"]}")
+                Song.create(title: "#{response_hash["items"][count]["name"]}", artist: "#{response_hash["items"][count]["album"]["artists"][0]["name"]}") 
+            end 
+        end
+    end
+
+    def add_songs_to_an_array(response_hash, limit)
+        song_array = []
+        limit.to_i.times do |count|
+            song_array << Song.find_by(title: "#{response_hash["items"][count]["name"]}")
+        end 
+        p song_array
+    end 
+
+    #this works to 
+    # def top_spotify_songs(response_hash, limit)
+    #     limit.to_i.times do |count|
+    #         Song.create(title: "#{response_hash["items"][count]["name"]}", artist: "#{response_hash["items"][count]["album"]["artists"][0]["name"]}") 
+    #     end
+    # end
+
+    # def add_songs_to_songs_table(response_hash, limit)
+
+    #     Song.create(title: "Someday", artist: "The Strokes") 
+    # end
+
+    def create_playlist(create_playlist_response, found_user, users_songs, song_object_array)
+        if create_playlist_response == "Yes"
+            puts "Please choose a name:"
+            pl_name = gets.chomp
+            new_pl = Playlist.create(name: "#{pl_name}", user_id:found_user.id) 
+            new_pl.songs = song_object_array.take(5)
+        end
+    end
     #hash["items"][0]["album"]["artists"][0]["name"]
     #returns Artist name as a string
     #hash["items"][0]["name"]
@@ -94,8 +126,9 @@ class PlaylistApp
         found_user.songs
     end 
 
-    def find_a_users_playlists(found_user)
-        found_user.playlists
+    def find_a_users_playlists
+        jonah = User.find_by(name: "Jonah")
+        jonah.playlists
     end 
 
     def show_playlist_prompt
@@ -182,22 +215,20 @@ class PlaylistApp
     end 
 
     def run_after_greeting
-        user_input = get_user_input
-        found_user = find_user_name(user_input)
-        users_songs = find_a_users_songs(found_user)
-        show_songs(users_songs)
-        top_five_response = top_five_prompt
-        show_top_five_songs(top_five_response, users_songs)
+        time_range = playlist_time_range_prompt
+        limit = playlist_limit_prompt
+        response = call_api(time_range, limit)
+        response_hash = parse_response(response)
+        add_to_songs_table(response_hash, limit)
+        songs_for_playlist_array = add_songs_to_an_array(response_hash, limit)
+        display_top_spotify_songs(response_hash, limit)
         create_playlist_response = create_playlist_prompt
-        song_object_array = top_song_titles(users_songs)
-        create_top_five_playlist(create_playlist_response, found_user, users_songs, song_object_array)
+        create_playlist(create_playlist_response, songs_for_playlist_array)
         show_playlist_response = show_playlist_prompt 
-        users_playlists = find_a_users_playlists(found_user)
+        users_playlists = find_a_users_playlists
         show_playlists(users_playlists, show_playlist_response)
         chosen_playlist_response = chosen_playlist_prompt 
         view_songs_in_playlist(chosen_playlist_response)
-        plays_by_title_response = plays_by_title_prompt 
-        plays_by_title(plays_by_title_response, users_songs)
         continue_response = prompt_to_continue
         continue_or_log_out(continue_response)
     end 
@@ -216,28 +247,6 @@ class PlaylistApp
             puts " * " * 10
         end 
     end 
-
-    # def show_top_five_songs(top_five_response, users_songs)
-    #     if top_five_response == "Yes"
-    #         array_of_titles = users_songs.map do |s|
-    #             s.title
-    #         end 
-    #         titles_sorted_by_count = array_of_titles.sort_by do |s| 
-    #             array_of_titles.count(s)
-    #         end
-    #         titles_in_order = titles_sorted_by_count.reverse
-    #         top_five_titles_array = titles_in_order.uniq.take(5)
-    #         puts " * " * 10
-    #         puts "Here are the 5 songs you've listened to the most, in order:"
-    #         top_five_titles_array.each_with_index do |s, i|
-    #             puts "#{i + 1}. #{s}"
-    #         end 
-    #         puts " * " * 10 
-    #     else 
-    #         puts "No problem! There's more that this app can do..."
-    #         puts " * " * 10
-    #     end 
-    # end 
 
     def plays_by_title_prompt
         puts "Please enter a song title to see the number of times you played that song:"
@@ -286,13 +295,22 @@ class PlaylistApp
         gets.chomp
     end
 
-    def create_top_five_playlist(create_playlist_response, found_user, users_songs, song_object_array)
+     def create_playlist(create_playlist_response, songs_for_playlist_array)
         if create_playlist_response == "Yes"
             puts "Please choose a name:"
             pl_name = gets.chomp
-            new_pl = Playlist.create(name: "#{pl_name}", user_id:found_user.id) 
-            new_pl.songs = song_object_array.take(5)
+            new_pl = Playlist.create(name: "#{pl_name}", user_id: User.find_by(name: "Jonah").id) 
+            new_pl.songs = songs_for_playlist_array
         end
     end
+
+    # def create_top_five_playlist(create_playlist_response, found_user, users_songs, song_object_array)
+    #     if create_playlist_response == "Yes"
+    #         puts "Please choose a name:"
+    #         pl_name = gets.chomp
+    #         new_pl = Playlist.create(name: "#{pl_name}", user_id:found_user.id) 
+    #         new_pl.songs = song_object_array.take(5)
+    #     end
+    # end
 
 end
