@@ -106,7 +106,7 @@ class PlaylistApp
         request = Net::HTTP::Get.new(uri)
         request.content_type = "application/json"
         request["Accept"] = "application/json"
-        request["Authorization"] = "Bearer BQAfp8PUPXD85y557NRpbDqQVC_ezmf9vzBsjLhMGpoxiOkU-k80QQH8rqhZit2oaKfNCBfE3ZRghcFz8AWLzbS_E3Uo8E6BMWJkOs7gfvg94YViQKAEVMM0jEOmXuZEme8F1GcVlSh0apURpSk3sfI"
+        request["Authorization"] = "Bearer BQBvQBupYaOAmuHRXfDKsQR0r87nY3Le68nFX4flN9u27fDICZ1qEqXy8s8ipqXwpDzXjHk6OYAHa1An5fBgCLwJlse2AvQz7O8tC6QIvMP0av8r2_fobCNbPQjYivhxZBLAs2xrRdqx8YUqM9yeOEg"
 
         req_options = {
         use_ssl: uri.scheme == "https",
@@ -215,6 +215,7 @@ class PlaylistApp
             interface(found_user) 
         else choice == "Log Out"
            puts "Have a nice day. Goodbye!"
+           exit
         end
     end 
 
