@@ -71,7 +71,7 @@ class PlaylistApp
         show_playlists(found_user)
         chosen_playlist_response = chosen_playlist_prompt 
         view_songs_in_playlist(chosen_playlist_response)
-        prompt_to_return_or_exit(found_user)
+        prompt_to_delete_return_or_exit(found_user, chosen_playlist_response)
     end
     
     def playlist_time_range_prompt
@@ -200,17 +200,27 @@ class PlaylistApp
         end
     end 
 
-    def prompt_to_return_or_exit(found_user)
+    def prompt_to_delete_return_or_exit(found_user, chosen_playlist_response)
         prompt = TTY::Prompt.new
         choice = prompt.select("Would you like to return to the main menu, or log out?") do |menu|
+            menu.choice "Delete this playlist"
             menu.choice "Return to Main Menu" 
             menu.choice "Log Out" 
         end
-        if choice == "Return to Main Menu"
+        if choice == "Delete this playlist"
+            delete_playlist(chosen_playlist_response)
+            show_playlists(found_user).reload
+            view_playlist_flow(found_user)
+        elsif choice == "Return to Main Menu"
             interface(found_user) 
         else choice == "Log Out"
            puts "Have a nice day. Goodbye!"
         end
+    end 
+
+    def delete_playlist(chosen_playlist_response)
+        pl_to_delete = Playlist.find_by(name: "#{chosen_playlist_response}")
+        pl_to_delete.destroy 
     end 
 
     # END PLAYLIST FLOW #
