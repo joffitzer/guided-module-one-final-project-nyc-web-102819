@@ -31,7 +31,7 @@ class PlaylistApp
     def greeting 
         puts " * " * 10
         puts ""
-        puts "Welcome to FAVLIST - the Playlist App."
+        puts "Welcome to FAVLIST - the Playlist App.".colorize(:green)
         puts ""
     end
 
@@ -43,7 +43,9 @@ class PlaylistApp
         end
         if choice == "Jonah"
            found_user = User.find_by(name: "Jonah")
-        end
+        else  choice == "Triona"
+            found_user = User.find_by(name: "Triona")
+        end 
         found_user
     end
 
@@ -53,12 +55,15 @@ class PlaylistApp
         choice = prompt.select("What would you like to do?") do |menu|
             menu.choice "Make a new playlist" 
             menu.choice "View playlists" 
+            menu.choice "Choose another profile"
             menu.choice "Log Out"
         end 
         if choice == "Make a new playlist"
             make_a_new_playlist_flow(found_user).reload 
         elsif choice == "View playlists"
             view_playlist_flow(found_user).reload
+        elsif choice == "Choose another profile"
+            run
         else choice == "Log Out"
             puts "Goodbye!"
             exit 
@@ -71,7 +76,7 @@ class PlaylistApp
     def make_a_new_playlist_flow(found_user)
         time_range = playlist_time_range_prompt
         limit = playlist_limit_prompt
-        response = call_api(time_range, limit)
+        response = call_api(time_range, limit, found_user)
         response_hash = parse_response(response)
         add_to_songs_table(response_hash, limit)
         songs_for_playlist_array = add_songs_to_an_array(response_hash, limit)
@@ -89,7 +94,14 @@ class PlaylistApp
     def view_playlist_flow(found_user)
         show_playlists(found_user)
         chosen_playlist_response = chosen_playlist_prompt 
-        view_songs_in_playlist(chosen_playlist_response)
+        view_songs_in_playlist(chosen_playlist_response, found_user)
+        prompt_to_delete_return_or_exit(found_user, chosen_playlist_response)
+    end
+
+    def view_playlist_flow_if_error(found_user)
+        show_playlists_if_error(found_user)
+        chosen_playlist_response = chosen_playlist_prompt 
+        view_songs_in_playlist(chosen_playlist_response, found_user)
         prompt_to_delete_return_or_exit(found_user, chosen_playlist_response)
     end
     
@@ -123,13 +135,16 @@ class PlaylistApp
         limit
     end
 
-    def call_api(time_range, limit)
+    def call_api(time_range, limit, found_user)
         uri = URI.parse("https://api.spotify.com/v1/me/top/tracks?time_range=#{time_range}&limit=#{limit}")
         request = Net::HTTP::Get.new(uri)
         request.content_type = "application/json"
         request["Accept"] = "application/json"
-        request["Authorization"] = "Bearer BQC5oEVesPCM42-BqrJlmsmBv5A81PLCqhrSU3MkS_z0ga152KPkCFxqdPsclmZRbB5dnjX1VhjiREF7Mp6LR01xfAv8SzXALEcAIZbQ1B6u5zwqOKH0wVU0ccDhYotwh4YPD8SLI5Y5nXpZafLDhik"
-
+        if found_user.name == "Jonah"
+            request["Authorization"] = "Bearer BQDZHAqQLV7SLMRlzjvfSOWMk0EgyK9XGrvAezMyqHl1N2efNVfHwbKwHpykYvJk7wfNK62j80dzdIds6ikAkPQqMrMAQZM3Gza4ai_jKoNwGwWP2WgGNC5UsjhDR2z4OiE1zVnsFQlTaG9Cj4v8dNY"
+        else
+            request["Authorization"] = "Bearer BQAs2OOrDOq6DZEcTghO0Cyi1qetL598xkmEOwqRkqma-FZElj0oYwC4lxT80i6FE1mU9MaONpBWqasVD37Njx3ISvPj6KGgzVttaQFPkVDvH9EmVAkzR8P-GSEhkxZZwIvJlpG5K47Jpvsf6-vzV-K8wqE4"
+        end 
         req_options = {
         use_ssl: uri.scheme == "https",
         }
@@ -210,7 +225,7 @@ class PlaylistApp
     end 
 
     def show_playlists(found_user)
-        system "clear"
+        # system "clear"
         puts "#{found_user.name}'s saved playlists:"
         puts ""
         playlists = found_user.playlists.reload
@@ -218,6 +233,17 @@ class PlaylistApp
                 puts "#{i + 1}. #{playlist.name}"
             end 
         puts ""
+    end 
+
+    def show_playlists_if_error(found_user)
+        puts "#{found_user.name}'s saved playlists:"
+        puts ""
+        playlists = found_user.playlists.reload
+            playlists.each_with_index do |playlist, i|
+                puts "#{i + 1}. #{playlist.name}"
+            end 
+        puts ""
+        puts "Please enter a valid playlist name:"
     end 
 
     def chosen_playlist_prompt
@@ -231,30 +257,43 @@ class PlaylistApp
     #     choices = %w(#{found_user.playlists})
     # end  
 
-    def view_songs_in_playlist(chosen_playlist_response)
+    def view_songs_in_playlist(chosen_playlist_response, found_user)
         system "clear"
-        puts "Songs in #{chosen_playlist_response}:"
-        puts ""
-        po = Playlist.find_by(name: "#{chosen_playlist_response}")
-        po.songs.each_with_index do |song, i|
-            puts "#{i + 1}. #{song.title} - #{song.artist}"
-        end
-        puts ""
+        if Playlist.find_by(name: "#{chosen_playlist_response}")
+            puts "Songs in #{chosen_playlist_response}:"
+            puts ""
+            po = Playlist.find_by(name: "#{chosen_playlist_response}")
+            po.songs.each_with_index do |song, i|
+                puts "#{i + 1}. #{song.title} - #{song.artist}"
+            end
+        else 
+            view_playlist_flow_if_error(found_user)
+        end 
+            puts ""
     end 
+
+    # def invalid_response
+    #     puts "Please type a valid playlist name:"
+    #     gets.chomp = chosen_playlist_response
+    #     view_songs_in_playlist(chosen_playlist_response)
+    # end 
 
     def prompt_to_delete_return_or_exit(found_user, chosen_playlist_response)
         prompt = TTY::Prompt.new
-        choice = prompt.select("Would you like to return to the main menu, or log out?") do |menu|
+        choice = prompt.select("What would you like to do next?") do |menu|
             menu.choice "Delete this playlist"
             menu.choice "Return to Main Menu" 
+            menu.choice "Choose another profile"
             menu.choice "Log Out" 
         end
         if choice == "Delete this playlist"
             delete_playlist(chosen_playlist_response)
-            show_playlists(found_user)
+            system "clear"
             view_playlist_flow(found_user).reload
         elsif choice == "Return to Main Menu"
             interface(found_user).reload 
+        elsif choice == "Choose another profile"
+            run
         else choice == "Log Out"
            puts "Have a nice day. Goodbye!"
            exit
@@ -263,7 +302,7 @@ class PlaylistApp
 
     def delete_playlist(chosen_playlist_response)
         pl_to_delete = Playlist.find_by(name: "#{chosen_playlist_response}")
-        pl_to_delete.destroy 
+        pl_to_delete.destroy
     end 
 
     # END PLAYLIST FLOW #
