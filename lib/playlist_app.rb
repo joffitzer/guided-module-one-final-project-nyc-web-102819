@@ -9,10 +9,11 @@ class PlaylistApp
     def run
         greeting
         found_user = select_profile
-        interface(found_user)
+        interface(found_user).reload 
     end
 
     def greeting 
+        system "clear"
         puts " * " * 10
         puts "Welcome to the Playlist App."
     end
@@ -30,6 +31,7 @@ class PlaylistApp
     end
 
     def interface(found_user)
+        system "clear"
         prompt = TTY::Prompt.new
         choice = prompt.select("What would you like to do?") do |menu|
             menu.choice "Make a new playlist" 
@@ -37,9 +39,9 @@ class PlaylistApp
             menu.choice "Log Out"
         end 
         if choice == "Make a new playlist"
-            make_a_new_playlist_flow(found_user)
+            make_a_new_playlist_flow(found_user).reload 
         elsif choice == "View playlists"
-            view_playlist_flow(found_user)
+            view_playlist_flow(found_user).reload
         else choice == "Log Out"
             puts "Goodbye!"
             exit 
@@ -75,24 +77,27 @@ class PlaylistApp
     end
     
     def playlist_time_range_prompt
+        system "clear"
         prompt = TTY::Prompt.new
         puts "Please answer the following questions to make your playlist:"
-        choice = prompt.select("Would you like the time range to be long_term, medium_term, or short_term?") do |menu|
-            menu.choice "Short-term" 
-            menu.choice "Medium-term" 
-            menu.choice "Long-term" 
+        puts ""
+        choice = prompt.select("Would you like to see your favorite songs from the past 4 weeks, 6 months or all-time?") do |menu|
+            menu.choice "4 Weeks" 
+            menu.choice "6 months" 
+            menu.choice "All-time" 
         end 
-        if choice == 'Short-term'
+        if choice == '4 Weeks'
             time_range = "short_term"
-        elsif choice == 'Medium-term'
+        elsif choice == '6 months'
             time_range = "medium_term"
-        else choice == 'Long-term'
+        else choice == 'All-time'
             time_range = "long_term"
         end 
         time_range 
     end
 
     def playlist_limit_prompt
+        system "clear"
         puts "How many songs do you want your playlist to have? (max 50)"
         limit = gets.chomp.to_i
             if limit > 50
@@ -106,7 +111,7 @@ class PlaylistApp
         request = Net::HTTP::Get.new(uri)
         request.content_type = "application/json"
         request["Accept"] = "application/json"
-        request["Authorization"] = "Bearer BQBvQBupYaOAmuHRXfDKsQR0r87nY3Le68nFX4flN9u27fDICZ1qEqXy8s8ipqXwpDzXjHk6OYAHa1An5fBgCLwJlse2AvQz7O8tC6QIvMP0av8r2_fobCNbPQjYivhxZBLAs2xrRdqx8YUqM9yeOEg"
+        request["Authorization"] = "Bearer BQC5oEVesPCM42-BqrJlmsmBv5A81PLCqhrSU3MkS_z0ga152KPkCFxqdPsclmZRbB5dnjX1VhjiREF7Mp6LR01xfAv8SzXALEcAIZbQ1B6u5zwqOKH0wVU0ccDhYotwh4YPD8SLI5Y5nXpZafLDhik"
 
         req_options = {
         use_ssl: uri.scheme == "https",
@@ -138,9 +143,13 @@ class PlaylistApp
     end 
 
     def display_top_spotify_songs(response_hash, limit)
+        system "clear"
+        puts "Here are your top #{limit} songs from that time frame:"
+        puts ""
         limit.to_i.times do |count|
         puts "#{count + 1}. #{response_hash["items"][count]["album"]["artists"][0]["name"]} - #{response_hash["items"][count]["name"]}"
         end
+        puts ""
     end
 
     def create_playlist_prompt(found_user, songs_for_playlist_array)
@@ -150,13 +159,14 @@ class PlaylistApp
             menu.choice "No" 
         end 
         if choice == "Yes"
-            create_playlist_flow(found_user, songs_for_playlist_array)
+            create_playlist_flow(found_user, songs_for_playlist_array).reload 
         else choice == "No" 
-            interface(found_user)
+            interface(found_user).reload 
         end
     end
 
     def create_playlist(found_user, songs_for_playlist_array)
+        system "clear"
         puts "Please choose a name for your playlist:"
         pl_name = gets.chomp
         new_pl = Playlist.create(name: "#{pl_name}", user_id:found_user.id) 
@@ -164,15 +174,16 @@ class PlaylistApp
     end
 
     def show_playlist_prompt(found_user)
+        system "clear"
         prompt = TTY::Prompt.new 
         choice = prompt.select("Would you like to see your playlists?") do |menu|
             menu.choice "Yes" 
             menu.choice "No" 
         end 
         if choice == "Yes"
-            view_playlist_flow(found_user)
+            view_playlist_flow(found_user).reload
         else choice == "No" 
-            interface(found_user)
+            interface(found_user).reload 
         end
     end 
 
@@ -182,22 +193,30 @@ class PlaylistApp
     end 
 
     def show_playlists(found_user)
-        playlists = found_user.playlists
+        system "clear"
+        puts "#{found_user.name}'s saved playlists:"
+        puts ""
+        playlists = found_user.playlists.reload
             playlists.each_with_index do |playlist, i|
                 puts "#{i + 1}. #{playlist.name}"
             end 
+        puts ""
     end 
 
     def chosen_playlist_prompt
-        puts "Select a playlist to view that playlist's songs:"
+        puts "Type a playlist name to view that playlist's songs:"
         gets.chomp 
     end 
 
     def view_songs_in_playlist(chosen_playlist_response)
+        system "clear"
+        puts "Songs in #{chosen_playlist_response}:"
+        puts ""
         po = Playlist.find_by(name: "#{chosen_playlist_response}")
         po.songs.each_with_index do |song, i|
             puts "#{i + 1}. #{song.title} - #{song.artist}"
         end
+        puts ""
     end 
 
     def prompt_to_delete_return_or_exit(found_user, chosen_playlist_response)
@@ -209,10 +228,10 @@ class PlaylistApp
         end
         if choice == "Delete this playlist"
             delete_playlist(chosen_playlist_response)
-            show_playlists(found_user).reload
-            view_playlist_flow(found_user)
+            show_playlists(found_user)
+            view_playlist_flow(found_user).reload
         elsif choice == "Return to Main Menu"
-            interface(found_user) 
+            interface(found_user).reload 
         else choice == "Log Out"
            puts "Have a nice day. Goodbye!"
            exit
