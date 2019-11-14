@@ -3,19 +3,36 @@ require 'rest-client'
 require 'net/http'
 require 'uri'
 require 'tty-prompt'
+require 'figlet'
+require 'colorize'
+require 'colorized_string'
 
 class PlaylistApp 
 
     def run
+        figlet
         greeting
         found_user = select_profile
         interface(found_user).reload 
     end
 
+    def figlet
+    system "clear"
+    puts ''                                                   
+    puts ' _______    ___   ____    ____  __       __       _______.___________.'.colorize(:color => :black, :background => :green)
+    puts '|   ____|  /   \  \   \  /   / |  |     |  |     /       |           |'.colorize(:color => :black, :background => :green)
+    puts '|  |__    /  ^  \  \   \/   /  |  |     |  |    |   (----`---|  |----`'.colorize(:color => :black, :background => :green)
+    puts '|   __|  /  /_\  \  \      /   |  |     |  |     \   \       |  |     '.colorize(:color => :black, :background => :green)     
+    puts '|  |    /  _____  \  \    /    |  `----.|  | .----)   |      |  |     '.colorize(:color => :black, :background => :green)     
+    puts '|__|   /__/     \__\  \__/     |_______||__| |_______/       |__|     '.colorize(:color => :black, :background => :green)
+    puts '                                                                      '.colorize(:color => :black, :background => :green)    
+    end 
+
     def greeting 
-        system "clear"
         puts " * " * 10
-        puts "Welcome to the Playlist App."
+        puts ""
+        puts "Welcome to FAVLIST - the Playlist App."
+        puts ""
     end
 
     def select_profile
@@ -206,7 +223,13 @@ class PlaylistApp
     def chosen_playlist_prompt
         puts "Type a playlist name to view that playlist's songs:"
         gets.chomp 
-    end 
+    end
+
+    # def chosen_playlist_prompt(found_user)
+    #     prompt = TTY::Prompt.new 
+    #     prompt.select("Select a playlist to view that playlist's songs:")
+    #     choices = %w(#{found_user.playlists})
+    # end  
 
     def view_songs_in_playlist(chosen_playlist_response)
         system "clear"
