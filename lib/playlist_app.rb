@@ -176,9 +176,9 @@ class PlaylistApp
         request.content_type = "application/json"
         request["Accept"] = "application/json"
         if found_user.name == "Jonah"
-            request["Authorization"] = "Bearer BQAuVItpg0J25NOQVkKEsSh1dQ7NvO6bPTRhRGu9ybgydHIxjn7bCWUlkn1XZzwBtBx3TYvT_y3RyObbs2C4Qoxw-LPuJGpYY8jGV0lsAMVT1148Z8Dq10nA93M8TU_qpGuYSpRmVKHhXrQH5CuLVC8"
+            request["Authorization"] = "Bearer BQBhjDuA5nqhCMm8HoaVqGwGk0YlGBqA6_hU-XrgntF1MlOhIdUVihw57AmiZXkOohEhKBTbufFZFJBUMqH04DTd82CWfdCyyrb7ltccEJq4izdH7Yjf-SeLwjW0LyNjLfAIiHnq90nu_XPP7teK1S0"
         else
-            request["Authorization"] = "Bearer BQClp5-f_zzgr3VqPAAtS0u8c-j0S9VLkY94H6gUEw9Kn7AzDtZpA73UsPZJdlae3SFItLfIKKSTl71AZ2GjtRAfFEXGX8aI8g0UuydXFPHFr9DjGfxvSoZh0OAAr9f_LsKkmv_1m5WyNDXUCdGOP0ZKnIFr1nC4v5J6rkWyqcbZntmcSIo3nk3GXpQqLTO_YIdwFDRozRpoJtmCb8Vs92R-qWFklTVGIBi1"
+            request["Authorization"] = "Bearer BQC9IgehrONibEYJjQlxKnIUU4nKn8TnkVPDOTkPmf6qF9fvg00GepZv9Mp0u1RLEYy1R72hoeL7KF6X6pzV1aK-KdxQSYkDoZS9S9-CpT9zM1w8JOjv5k1r6sWnpsCw6ouxL1XgYRsOMlkxJqa3FF2VD96GG_Am6mrBz_A_gH2kBIA57BJlJOTV_X_mI5qEfpK0r-OKO3G-BaKjvVpdt3sFsI1-e5-UBMlE"
         end 
         req_options = {
         use_ssl: uri.scheme == "https",
@@ -295,6 +295,8 @@ class PlaylistApp
             po.songs.each_with_index do |song, i|
                 puts "#{i + 1}. #{song.title} - #{song.artist}"
             end
+            first_song = po.songs.first.title
+            system("spotify play #{first_song}")
         else 
             view_playlist_flow_if_error(found_user)
         end 
@@ -311,19 +313,27 @@ class PlaylistApp
             menu.choice "Log Out" 
         end
         if choice == "Rename this playlist"
+            stop_spotify
             rename_playlist(chosen_playlist_response, found_user)
         elsif choice == "Delete this playlist"
+            stop_spotify
             delete_playlist(chosen_playlist_response)
             system "clear"
             view_playlist_flow(found_user).reload
         elsif choice == "Return to Main Menu"
+            stop_spotify
             interface(found_user).reload 
         elsif choice == "Choose another profile"
             run
         else choice == "Log Out"
+            stop_spotify
             log_out
         end
     end  
+
+    def stop_spotify
+        system("spotify stop")
+    end 
 
     def rename_playlist(chosen_playlist_response, found_user)
         puts "Choose a new name for this playlist:"
