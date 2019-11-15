@@ -304,12 +304,15 @@ class PlaylistApp
     def prompt_to_delete_return_or_exit(found_user, chosen_playlist_response)
         prompt = TTY::Prompt.new
         choice = prompt.select("What would you like to do next?") do |menu|
+            menu.choice "Rename this playlist"
             menu.choice "Delete this playlist"
             menu.choice "Return to Main Menu" 
             menu.choice "Choose another profile"
             menu.choice "Log Out" 
         end
-        if choice == "Delete this playlist"
+        if choice == "Rename this playlist"
+            rename_playlist(chosen_playlist_response, found_user)
+        elsif choice == "Delete this playlist"
             delete_playlist(chosen_playlist_response)
             system "clear"
             view_playlist_flow(found_user).reload
@@ -321,6 +324,15 @@ class PlaylistApp
             log_out
         end
     end  
+
+    def rename_playlist(chosen_playlist_response, found_user)
+        puts "Choose a new name for this playlist:"
+        new_playlist_name = gets.chomp
+        found_playlist = Playlist.find_by(name: "#{chosen_playlist_response}")
+        found_playlist.name = new_playlist_name 
+        found_playlist.save
+        view_playlist_flow(found_user).reload
+    end 
 
     def delete_playlist(chosen_playlist_response)
         pl_to_delete = Playlist.find_by(name: "#{chosen_playlist_response}")
