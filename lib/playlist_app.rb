@@ -18,6 +18,7 @@ class PlaylistApp
 
     def figlet
     system "clear"
+    puts " * " * 24
     puts ''                                                   
     puts ' _______    ___   ____    ____  __       __       _______.___________.'.colorize(:color => :black, :background => :green)
     puts '|   ____|  /   \  \   \  /   / |  |     |  |     /       |           |'.colorize(:color => :black, :background => :green)
@@ -29,7 +30,8 @@ class PlaylistApp
     end 
 
     def greeting 
-        puts " * " * 10
+        puts ""
+        puts " * " * 24
         puts ""
         puts "Welcome to FAVLIST - the Playlist App.".colorize(:green)
         puts ""
@@ -70,7 +72,6 @@ class PlaylistApp
     end
 
     # FLOWS #
-    # PLAYLIST FLOW #
     
     def make_a_new_playlist_flow(found_user)
         time_range = playlist_time_range_prompt
@@ -114,6 +115,8 @@ class PlaylistApp
         view_songs_in_playlist(chosen_playlist_response, found_user)
         prompt_to_delete_return_or_exit(found_user, chosen_playlist_response)
     end
+
+    # END FLOWS #
     
     def playlist_time_range_prompt
         system "clear"
@@ -173,9 +176,9 @@ class PlaylistApp
         request.content_type = "application/json"
         request["Accept"] = "application/json"
         if found_user.name == "Jonah"
-            request["Authorization"] = "Bearer BQB5ef5mYL4NqUa8Dum_wBSkhMfJ1WKWSrtiJawepzilmmOT8Gm_XuCrR_wW-uBWnPZTU6XwuchON721K8HnWZ_fi1Ma3x_MYyD_rMA9R8nd4PzRVgVMw5TQYl3VzT50RVkqeVlT__nhQ9tuYC9OPcU"
+            request["Authorization"] = "Bearer BQAuVItpg0J25NOQVkKEsSh1dQ7NvO6bPTRhRGu9ybgydHIxjn7bCWUlkn1XZzwBtBx3TYvT_y3RyObbs2C4Qoxw-LPuJGpYY8jGV0lsAMVT1148Z8Dq10nA93M8TU_qpGuYSpRmVKHhXrQH5CuLVC8"
         else
-            request["Authorization"] = "Bearer BQC2f7suT0rF-GCIABjNGHsPbZtCWEdQcLtnMAlZqWXHdkctYm8PbWRusV8nDpxjbx05KmnTrEwChRl-BUN55aMX0Sjiz2QUTdiojXUDDOePHuLTo6kRWW-8oAXoA67QSuzxPi0paYSvqDaCqPBlZytosiJX_xndsuDUyfM"
+            request["Authorization"] = "Bearer BQClp5-f_zzgr3VqPAAtS0u8c-j0S9VLkY94H6gUEw9Kn7AzDtZpA73UsPZJdlae3SFItLfIKKSTl71AZ2GjtRAfFEXGX8aI8g0UuydXFPHFr9DjGfxvSoZh0OAAr9f_LsKkmv_1m5WyNDXUCdGOP0ZKnIFr1nC4v5J6rkWyqcbZntmcSIo3nk3GXpQqLTO_YIdwFDRozRpoJtmCb8Vs92R-qWFklTVGIBi1"
         end 
         req_options = {
         use_ssl: uri.scheme == "https",
@@ -219,7 +222,7 @@ class PlaylistApp
     def create_playlist_prompt(found_user, songs_for_playlist_array)
         prompt = TTY::Prompt.new 
         choice = prompt.select("Would you like to save these songs as a playlist?") do |menu|
-            menu.choice "Yes" 
+            menu.choice "Yes"
             menu.choice "No" 
         end 
         if choice == "Yes"
@@ -283,12 +286,6 @@ class PlaylistApp
         gets.chomp 
     end
 
-    # def chosen_playlist_prompt(found_user)
-    #     prompt = TTY::Prompt.new 
-    #     prompt.select("Select a playlist to view that playlist's songs:")
-    #     choices = %w(#{found_user}.playlists)
-    # end  
-
     def view_songs_in_playlist(chosen_playlist_response, found_user)
         system "clear"
         if Playlist.find_by(name: "#{chosen_playlist_response}")
@@ -303,12 +300,6 @@ class PlaylistApp
         end 
             puts ""
     end 
-
-    # def invalid_response
-    #     puts "Please type a valid playlist name:"
-    #     gets.chomp = chosen_playlist_response
-    #     view_songs_in_playlist(chosen_playlist_response)
-    # end 
 
     def prompt_to_delete_return_or_exit(found_user, chosen_playlist_response)
         prompt = TTY::Prompt.new
@@ -329,7 +320,7 @@ class PlaylistApp
         else choice == "Log Out"
             log_out
         end
-    end 
+    end  
 
     def delete_playlist(chosen_playlist_response)
         pl_to_delete = Playlist.find_by(name: "#{chosen_playlist_response}")
@@ -337,20 +328,15 @@ class PlaylistApp
     end 
 
     def log_out
-       system "clear"
-       puts "Goodbye!"
-       exit 
+        system "clear"
+        puts ''                               
+        puts '     _____           _ _              '.colorize(:color => :black, :background => :green)
+        puts '    |   __|___ ___ _| | |_ _ _ ___    '.colorize(:color => :black, :background => :green)
+        puts '    |  |  | . | . | . | . | | | -_|   '.colorize(:color => :black, :background => :green)
+        puts '    |_____|___|___|___|___|_  |___|   '.colorize(:color => :black, :background => :green)
+        puts '                          |___|       '.colorize(:color => :black, :background => :green)
+        puts '                                      '
+        exit 
     end 
-
-    # END PLAYLIST FLOW #
-
-    # HELPER? #
-
-    def find_a_users_songs(found_user)
-       songs = found_user.playlists.songs.map do |song|
-            song.title
-        end
-        p songs.uniq
-    end
 
 end 
